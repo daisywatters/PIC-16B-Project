@@ -15,16 +15,16 @@ def Website():
     '''
     put_markdown('### Answer a couple questions and we will tell you where to apply!'), put_markdown('# **Welcome to Your College Application Guide**') # sets website heading and subheading
     with use_scope('scope1'):
-        # let's users select their gpa from drop-down menu
+        # lets users select their gpa from drop-down menu
         gpa = select("Select your GPA (Round for best approximation)：", ['4.0','3.9','3.8','3.7','3.6','3.5','3.4','3.3','3.2','3.1','3.0','2.9','2.8','2.7','2.6','2.5','2.4','2.3','2.2','2.1','2.0']) 
         gpa = float(gpa)
-        # let's users choose preferred type of school via checkbox
+        # lets users choose preferred type of school via checkbox
         school_type = checkbox("Private vs. Public：", options=['Private', 'Public'])
-        # let's users choose preferred number of undergraduates in each grade level via checkbox
+        # lets users choose preferred number of undergraduates in each grade level via checkbox
         num_undergrads = select("Number of undergraduates per grade：", ['0 to 500 (Very Small)', '500 to 1,000 (Small)', '1,000 to 5,000 (Medium)', '5,000 to 10,000 (Large)', '10,000+ (Very Large)'])
         # shows map of different US regions
         put_image('https://www.mappr.co/wp-content/uploads/2021/12/us-regions-map-census.jpg')
-        # let's users choose preferred region of study via checkbox
+        # lets users choose preferred region of study via checkbox
         location = checkbox("Preferred region of study：", options=['West', 'Midwest', 'Northeast', 'South'])
     
     with use_scope('scope1', clear=True):
@@ -39,7 +39,7 @@ def Website():
         # converts 'college_map' plotly map to html for website
         college_map_html = college_map.to_html(include_plotlyjs="require", full_html=False)
         pywebio.output.put_html(college_map_html)
-        # coverts 'college_table' dataframe to html for website
+        # converts 'college_table' dataframe to html for website
         put_html(college_table.to_html(border=0, render_links=True))
         
 def prepare_df(df):
@@ -62,7 +62,7 @@ def prepare_df(df):
     # finds index of rows in df where colleges are not in the US
     not_USA_colleges = df[(df['Country'] != 'USA')].index 
     
-    # Delete these row indexes from dataFrame
+    # delete these row indexes from dataFrame
     df = df.drop(not_USA_colleges)
     
     # makes every website link https for later user functionality purposes
