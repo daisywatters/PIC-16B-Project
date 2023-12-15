@@ -6,9 +6,6 @@ import numpy as np
 import pandas as pd
 from plotly import express as px
 
-# https://pywebio.readthedocs.io/en/latest/guide.html (for pywebio built-in functions)
-# https://www.pyweb.io/tutorial.html (for showing map)
-# https://pywebio.readthedocs.io/en/latest/cookbook.html (for showing dataframe)
 
 def Website():
     '''
