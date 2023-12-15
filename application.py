@@ -30,7 +30,6 @@ def Website():
     with use_scope('scope1', clear=True):
         # calls function for creating dataframe of suggested colleges per user inputs
         college_table = college_recs(gpa, school_type, num_undergrads, location)
-        #college_table
         # calls function for creating map of suggested colleges per user inputs
         college_map = college_recs_map(college_table)
         # drops Latitude, Longitude, and unwanted index columns so they won't be displayed on website
