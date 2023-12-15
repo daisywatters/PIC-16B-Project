@@ -16,6 +16,7 @@ In this project, we will be creating a college application guide such that high 
 ## How to complete project for yourself:
 
 ### Data Collection via Web Scraping
+#### TO DO:
 1. Download `colleges` file from git main
 2. Open terminal and navigate to where the `colleges` file exists on your machine
 3. Run `college_spider.py` in terminal with `scrapy crawl college_spider -o colleges.csv` to create your own csv file of college statistical data scraped from [appily](https://www.appily.com/colleges/gpa) OR download `colleges.csv` from git main
@@ -29,9 +30,11 @@ In this project, we will be creating a college application guide such that high 
 1. Scrapes college name, average GPA, acceptance rate, institution type, and total number of undergraduate students for each college on each GPA page
 2. Yields dictionary of college's statistics
 
-### Website Design and Functionality
-1. Download `applications.py` file from git main
-2. Run `applications.py` in terminal with `python applications.py`
+### Website Design and Functionality 
+#### TO DO:
+1. Download second data set from [opendatasoft](https://public.opendatasoft.com/explore/dataset/us-colleges-and-universities/table/?flg=en-us)
+2. Download `applications.py` file from git main
+3. Run `applications.py` in terminal with `python applications.py`
 
 #### How it works:
 ###### `Website` function
