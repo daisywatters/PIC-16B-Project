@@ -79,20 +79,42 @@ def prepare_df(df):
     
     return(df)
 
-def college_recs(gpa_input, type_inst_input, size_input, location_input):    
+def college_recs(gpa_input, type_inst_input, size_input, location_input):
+    '''
+    Input: 
+    - gpa input (select one value from 2.0 to 4.0 incremented by 0.1)
+    - type of institution input (select one or more from public, private)
+    - size input (select one value from 0 to 500, 500 to 1,000, 1,000 to 5,000, 5,000 to 10,000, or 10,000+)
+    - location input (select one or more from Northeast, Midwest, South, West)
     
+    Output: 
+    - data frame with values for gpa, type of institution, size, location corresponding to user's 
+    inputted selections
+    '''
+    
+    # pull data from Opendatasoft containing over 6000 colleges in the U.S. and US territories.
     df = pd.read_json("us-colleges-and-universities.json")
-    
+
+    # use prepare_df function to clean the dataframe
     colleges_locations = prepare_df(df)
-    
+
+    # read in colleges.csv from web scraping Appily website 
     colleges_stats = pd.read_csv("colleges.csv")
     colleges_stats["College"] = colleges_stats["College"].apply(lambda x: x.title())
-    
+
+    # Merge dataframes from Opendatasoft and Appily
     data_merge = pd.merge(colleges_locations, colleges_stats, on='College')
+    
+    # Drop duplicates for Website name
     data_merge = data_merge.drop_duplicates(subset=['Website'])
+    
+    # Strip whitespace before "Public" and "Private" in the column for "Type of Institution"
     data_merge["Type of Institution"] = data_merge["Type of Institution"].apply(lambda x: x.strip())
+
+    # Reset index for the new merged data frame
     data_merge = data_merge.reset_index()
 
+    # Dictionary containing all the states in a given region
     region_dict = {
         "Northeast": ["PA", "NY", "VT", "ME", "NJ", "CT", "RI", "MA"],
         "Midwest": ["ND", "SD", "NE", "KS", "MN", "IA", "MO", "WI", "IL", "MI", "IN", "OH"],
@@ -100,6 +122,7 @@ def college_recs(gpa_input, type_inst_input, size_input, location_input):
         "West": ["AK", "HI", "WA", "OR", "CA", "AZ", "NM", "NV", "UT", "CO", "ID", "WY", "MT"]
     }
     
+    # Dictionary containing the tuples for a given size
     size_dict = {
         "0 to 500 (Very Small)" : (0, 500),
         "500 to 1,000 (Small)" : (500, 1000),
@@ -108,14 +131,21 @@ def college_recs(gpa_input, type_inst_input, size_input, location_input):
         "10,000+ (Very Large)" : (10000, 500000)
     }
     
+    # list of states in the user's inputted region choice 
+    # for loop allows for multiple region selections
     states_in_region = []
     for region in location_input:
         states_in_region = states_in_region + region_dict[region]
 
+    # assign lower size value to first value in size tuple
+    # assign upper size value to second value in size tuple
     lowerbound, upperbound = size_dict[size_input]
-    
+
+    # initialize lists for latitude and longitude
     lat = []
     lon = []
+
+    # loop through each row in data_merge data frame and extract the latitude and longitude for each college
     for i in range(0, data_merge.shape[0]):
         for key, value in data_merge["Coordinates"][i].items():
             if key == "lat":
@@ -123,27 +153,48 @@ def college_recs(gpa_input, type_inst_input, size_input, location_input):
             if key == "lon":
                 lon.append(value)
 
+    # Create "Latitude" column and assign latitude for each college to it
     data_merge["Latitude"] = lat
+
+    # Create "Longitude" column and assign longitude for each college to it
     data_merge["Longitude"] = lon
                 
+    # Drop "Coordinates" column from final data frame
     final_data = data_merge.drop(columns = ["Coordinates"])
-            
+
+    # Output GPA, Type of Institution, State, Number of Students, corresponding to user's 
+    # inputted selections in the final data frame
     final_data = final_data[(data_merge["GPA"] <= gpa_input) & 
                             (data_merge["Type of Institution"].isin(type_inst_input)) & 
                             (data_merge["State"].isin(states_in_region)) &
                             (data_merge["Number of Students"] >= lowerbound) & 
                             (data_merge["Number of Students"] < upperbound)]
 
+    # Reset index for final data frame
     final_data = final_data.reset_index()
-    
+
+    # Return final data frame
     return final_data
     
     
 def college_recs_map(df):
+    '''
+    Input: 
+    - data frame with user's ideal college recommendations according to their inputted preferences
+    
+    Output: 
+    - map with colleges represented as points at the actual coordinates of the college's 
+    location (using Latitude and Longitude) columns of the data frame
+    - hovering over each point shows the college's GPA, City, State, Acceptance Rate, and Type of Institution
+    '''
+
+    # Create a scatter mapbox using plotly express
     fig = px.scatter_mapbox(df,
+                            # Use college's real Latitude and Longitude coordinates
                             lat = "Latitude",
                             lon = "Longitude",
                             hover_name = "College",
+                            # Data revealed upon hovering over the college point
                             hover_data = {"Latitude" : False, 
                                           "Longitude" : False, 
                                           "GPA" : True, 
@@ -153,6 +204,7 @@ def college_recs_map(df):
                                           "Type of Institution" : True, 
                                           "Number of Students" : True},
                             zoom = 2,
+                            # Size of point differs by the size of the college
                             size = "Number of Students",
                             size_max = 10,
                             opacity = 0.8,
@@ -160,6 +212,8 @@ def college_recs_map(df):
 
     fig.update_layout(mapbox_style = "carto-positron")
     fig.update_layout(margin = {"r":0, "t":0, "l":0, "b":0})
+
+    # Return map figure
     return fig
 
 if __name__ == '__main__':
