@@ -69,3 +69,6 @@ Creates data frame of recommended colleges and their average unweighted GPA, acc
 Creates `Plotly map` of recommended colleges and their stats using data frame of recommended colleges.
 
 1. Creates `scatter_mapbox` where point size is based on size of school, and hover data includes average unweighted GPA, location, acceptance rate, type of institution, and number of students per grade level
+
+## Conclusion
+That's it! Now you can create this college application guide for yourself!
